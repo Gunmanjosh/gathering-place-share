@@ -1,20 +1,33 @@
-<a href="#" id="shareLink" style="display:inline-block; width:40px; height:40px;">
-</a>
-<script>
-document.getElementById('shareLink').addEventListener('click', function(event) {
-  event.preventDefault(); // Prevent default link behavior
-  if (navigator.share) {
-    navigator.share({
-      title: 'The Gathering Place',
-      text: 'Check out The Gathering Place!',
-      url: 'https://thegatheringplace.us'
-    }).then(() => {
-      console.log('Thanks for sharing!');
-    }).catch((error) => {
-      console.error('Error sharing:', error);
-    });
-  } else {
-    alert('Sharing not supported on this browser.');
-  }
-});
-</script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gathering Place</title>
+</head>
+<body>
+    <script>
+      // Trigger share on page load
+      window.addEventListener('load', function() {
+        // Check if the Web Share API is available
+        if (navigator.share) {
+          navigator.share({
+            title: 'The Gathering Place',
+            text: 'Check out The Gathering Place!',
+            url: 'https://thegatheringplace.us'
+          })
+          .then(() => {
+            console.log('Thanks for sharing!');
+          })
+          .catch((error) => {
+            // User canceled the share or an error occurred
+            console.error('Share error:', error);
+          });
+        } else {
+          // Fallback for browsers that don't support Web Share API
+          alert('Sharing not supported on this browser. You can copy the link: https://thegatheringplace.us');
+        }
+      });
+    </script>
+</body>
+</html>
