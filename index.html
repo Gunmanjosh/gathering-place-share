@@ -4,30 +4,113 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>The Gathering Place</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .container {
+            text-align: center;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+            margin: 0 0 20px 0;
+        }
+        .share-button {
+            background-color: #667eea;
+            color: white;
+            padding: 15px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .share-button:hover {
+            background-color: #764ba2;
+        }
+        .share-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .status-message {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <h1>The Gathering Place</h1>
+        <button class="share-button" id="shareBtn">Share with Friends</button>
+        <div class="status-message" id="statusMsg"></div>
+    </div>
+
     <script>
-      // Trigger share on page load
-      window.addEventListener('load', function() {
-        // Check if the Web Share API is available
-        if (navigator.share) {
-          navigator.share({
+        const shareData = {
             title: 'The Gathering Place',
             text: 'Check out The Gathering Place!',
             url: 'https://thegatheringplace.us'
-          })
-          .then(() => {
-            console.log('Thanks for sharing!');
-          })
-          .catch((error) => {
-            // User canceled the share or an error occurred
-            console.error('Share error:', error);
-          });
-        } else {
-          // Fallback for browsers that don't support Web Share API
-          alert('Sharing not supported on this browser. You can copy the link: https://thegatheringplace.us');
+        };
+
+        const shareBtn = document.getElementById('shareBtn');
+        const statusMsg = document.getElementById('statusMsg');
+
+        // Function to handle the share
+        async function handleShare() {
+            try {
+                // Check if the Web Share API is available
+                if (navigator.share) {
+                    await navigator.share(shareData);
+                    statusMsg.textContent = '✓ Thanks for sharing!';
+                    statusMsg.style.color = 'green';
+                } else if (navigator.canShare && navigator.canShare(shareData)) {
+                    await navigator.share(shareData);
+                    statusMsg.textContent = '✓ Thanks for sharing!';
+                    statusMsg.style.color = 'green';
+                } else {
+                    // Fallback: Copy to clipboard
+                    await fallbackShare();
+                }
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    statusMsg.textContent = '✗ Share error: ' + error.message;
+                    statusMsg.style.color = 'red';
+                    console.error('Share error:', error);
+                }
+            }
         }
-      });
+
+        // Fallback function for browsers without Web Share API
+        async function fallbackShare() {
+            try {
+                await navigator.clipboard.writeText(shareData.url);
+                statusMsg.textContent = '✓ Link copied to clipboard! (Web Share API not supported)';
+                statusMsg.style.color = 'green';
+            } catch (err) {
+                statusMsg.textContent = 'Sharing not supported. Link: ' + shareData.url;
+                statusMsg.style.color = 'orange';
+                alert('Sharing not supported on this browser.\n\nYou can copy this link:\n' + shareData.url);
+            }
+        }
+
+        // Attach click event to button
+        shareBtn.addEventListener('click', handleShare);
+
+        // Optional: Auto-trigger on page load (uncomment if desired)
+        // window.addEventListener('load', function() {
+        //     handleShare();
+        // });
     </script>
 </body>
 </html>
