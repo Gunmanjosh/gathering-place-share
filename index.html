@@ -1,121 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gathering Place</title>
-    <style>
-        body {
-            font-family: sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            background: #f9f9f9;
-        }
+<button id="share-btn" type="button">Share</button>
 
-        h1 { margin-bottom: 0.5rem; }
-        p  { color: #555; margin-bottom: 1.5rem; }
+<!-- ... rest of your HTML ... -->
 
-        #share-btn {
-            padding: 0.75rem 2rem;
-            font-size: 1rem;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        #share-btn:hover { background: #357abd; }
+<script>
+    async function handleShare() {
+        const shareData = {
+            title: 'The Gathering Place',
+            text: 'Check out The Gathering Place!',
+            url: 'https://thegatheringplace.us'
+        };
 
-        #fallback {
-            display: none;
-            margin-top: 1rem;
-            text-align: center;
-        }
-        #fallback input {
-            padding: 0.5rem;
-            font-size: 0.9rem;
-            width: 260px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-        }
-        #copy-btn {
-            margin-top: 0.5rem;
-            padding: 0.5rem 1.25rem;
-            font-size: 0.9rem;
-            background: #eee;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        #copy-btn:hover { background: #ddd; }
-        #copy-msg { font-size: 0.85rem; color: green; margin-top: 0.5rem; }
-    </style>
-</head>
-<body>
-
-    <h1>The Gathering Place</h1>
-    <p>Share this site with friends and family!</p>
-
-    <button id="share-btn" onclick="handleShare()">Share</button>
-
-    <!-- Fallback for browsers without Web Share API -->
-    <div id="fallback">
-        <p style="color:#555; margin-bottom:0.5rem;">Copy and share this link:</p>
-        <input type="text" id="link-input" value="https://thegatheringplace.us" readonly />
-        <br>
-        <button id="copy-btn" onclick="copyLink()">Copy Link</button>
-        <div id="copy-msg"></div>
-    </div>
-
-    <script>
-        async function handleShare() {
-            const shareData = {
-                title: 'The Gathering Place',
-                text: 'Check out The Gathering Place!',
-                url: 'https://thegatheringplace.us'
-            };
-
-            if (navigator.share) {
-                try {
-                    await navigator.share(shareData);
-                    console.log('Shared successfully');
-                } catch (err) {
-                    if (err.name !== 'AbortError') {
-                        // Share failed for a real reason — show fallback
-                        showFallback();
-                    }
-                    // AbortError = user just closed the share sheet, no action needed
+        if (navigator.share) {
+            try {
+                await navigator.share(shareData);
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    showFallback();
                 }
-            } else {
-                // Browser doesn't support Web Share API
-                showFallback();
             }
+        } else {
+            showFallback();
         }
+    }
 
-        function showFallback() {
-            document.getElementById('fallback').style.display = 'block';
-        }
+    function showFallback() {
+        document.getElementById('fallback').style.display = 'block';
+    }
 
-        function copyLink() {
-            const input = document.getElementById('link-input');
-            input.select();
-            input.setSelectionRange(0, 99999); // mobile support
+    function copyLink() {
+        const input = document.getElementById('link-input');
+        input.select();
+        input.setSelectionRange(0, 99999);
 
-            navigator.clipboard.writeText(input.value)
-                .then(() => {
-                    document.getElementById('copy-msg').textContent = 'Link copied!';
-                })
-                .catch(() => {
-                    // Clipboard API blocked — fallback to execCommand
-                    document.execCommand('copy');
-                    document.getElementById('copy-msg').textContent = 'Link copied!';
-                });
-        }
-    </script>
+        navigator.clipboard.writeText(input.value)
+            .then(() => {
+                document.getElementById('copy-msg').textContent = 'Link copied!';
+            })
+            .catch(() => {
+                document.execCommand('copy');
+                document.getElementById('copy-msg').textContent = 'Link copied!';
+            });
+    }
 
-</body>
-</html>
+    document.getElementById('share-btn').addEventListener('click', handleShare);
+    document.getElementById('copy-btn').addEventListener('click', copyLink);
+</script>
