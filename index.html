@@ -6,36 +6,28 @@
     <title>The Gathering Place</title>
 </head>
 <body>
-    <button id="shareLink">Share</button>
-
     <script>
-      // Get the share button element
-      const shareLink = document.getElementById('shareLink');
-      
-      if (shareLink) {
-        shareLink.addEventListener('click', function(event) {
-          event.preventDefault(); // Prevent default link behavior
-          
-          // Check if the Web Share API is available
-          if (navigator.share) {
-            navigator.share({
-              title: 'The Gathering Place',
-              text: 'Check out The Gathering Place!',
-              url: 'https://thegatheringplace.us'
-            })
-            .then(() => {
-              console.log('Thanks for sharing!');
-            })
-            .catch((error) => {
-              // User canceled the share or an error occurred
-              console.error('Share error:', error);
-            });
-          } else {
-            // Fallback for browsers that don't support Web Share API
-            alert('Sharing not supported on this browser. You can copy the link: https://thegatheringplace.us');
-          }
-        });
-      }
+      // Trigger share on page load
+      window.addEventListener('load', function() {
+        // Check if the Web Share API is available
+        if (navigator.share) {
+          navigator.share({
+            title: 'The Gathering Place',
+            text: 'Check out The Gathering Place!',
+            url: 'https://thegatheringplace.us'
+          })
+          .then(() => {
+            console.log('Thanks for sharing!');
+          })
+          .catch((error) => {
+            // User canceled the share or an error occurred
+            console.error('Share error:', error);
+          });
+        } else {
+          // Fallback for browsers that don't support Web Share API
+          alert('Sharing not supported on this browser. You can copy the link: https://thegatheringplace.us');
+        }
+      });
     </script>
 </body>
 </html>
