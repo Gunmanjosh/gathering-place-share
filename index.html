@@ -58,9 +58,9 @@
 
     <script>
         const shareData = {
-            title: 'The Gathering Place',
-            text: 'Check out The Gathering Place!',
-            url: 'https://thegatheringplace.us'
+            title: 'The Gathering Place Cafe',
+            text: 'Check out The Gathering Place Cafe!',
+            url: 'https://thegatheringplacecafe.us'
         };
 
         const shareBtn = document.getElementById('shareBtn');
@@ -71,6 +71,10 @@
             try {
                 // Check if the Web Share API is available
                 if (navigator.share) {
+                    await navigator.share(shareData);
+                    statusMsg.textContent = '✓ Thanks for sharing!';
+                    statusMsg.style.color = 'green';
+                } else if (navigator.canShare && navigator.canShare(shareData)) {
                     await navigator.share(shareData);
                     statusMsg.textContent = '✓ Thanks for sharing!';
                     statusMsg.style.color = 'green';
@@ -101,6 +105,11 @@
 
         // Attach click event to button
         shareBtn.addEventListener('click', handleShare);
+
+        // Optional: Auto-trigger on page load (uncomment if desired)
+        // window.addEventListener('load', function() {
+        //     handleShare();
+        // });
     </script>
 </body>
 </html>
